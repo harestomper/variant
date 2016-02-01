@@ -46,8 +46,15 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 template<int ...vList> struct static_max;
-template<> struct static_max<> { static constexpr int result = 0; };
-template<int Val, int ...vList> struct static_max<Val, vList...>
+
+template<> 
+struct static_max<> 
+{ 
+    static constexpr int result = 0; 
+};
+
+template<int Val, int ...vList> 
+struct static_max<Val, vList...>
 {
     static constexpr int result = Val > static_max<vList...>::result ? Val : static_max<vList...>::result;
 };
@@ -58,13 +65,17 @@ template<int X, typename ...aT>
 struct index_type
 {
     template<int C, typename ...__aT> struct Find;
-    template<int C> struct Find<C> {
+    
+    template<int C> 
+    struct Find<C> 
+    {
         using type = void;
         using const_type = void;
     };
 
     template<int C, typename __vT, typename ...__aT>
-    struct Find<C, __vT, __aT...> {
+    struct Find<C, __vT, __aT...> 
+    {
         using type = typename std::conditional<(X == C), __vT, typename Find<C + 1, __aT...>::type>::type;
         using const_type = typename std::conditional<(X == C), const __vT, typename Find<C + 1, __aT...>::const_type>::type;
     };
@@ -79,9 +90,17 @@ template<typename rT, typename ...aT>
 struct type_index
 {
     template<int X, typename ...__aT> struct Find;
-    template<int X> struct Find<X> { static constexpr int value = -1; };
-    template<int X, typename __vT, typename ...__aT> struct Find<X, __vT, __aT...>
-    { static constexpr int value = (std::is_same<rT, __vT>::value ? X : Find<X + 1, __aT...>::value); };
+    template<int X> 
+    struct Find<X> 
+    { 
+        static constexpr int value = -1; 
+    };
+    
+    template<int X, typename __vT, typename ...__aT> 
+    struct Find<X, __vT, __aT...>
+    { 
+        static constexpr int value = (std::is_same<rT, __vT>::value ? X : Find<X + 1, __aT...>::value); 
+    };
 
     static constexpr int value = Find<0, aT...>::value;
 };
@@ -94,7 +113,10 @@ struct assistant<Idx, vT, tList...>
     using self_type = assistant<Idx, tList...>;
     using next_type = assistant<Idx + 1, tList...>;
 
-    static int index() { return Idx; }
+    static int index() 
+    { 
+        return Idx; 
+    }
 
     template<typename ...Args>
     static int construct(int ix, void* data, Args&&... args)
@@ -158,7 +180,10 @@ private:
     template<typename ...Args>
     static
     typename std::enable_if<(not std::is_constructible<vT, Args&&...>::value), int>::type
-    __construct(void* data, Args&&... args) { return -1; }
+    __construct(void* data, Args&&... args) 
+    { 
+        return -1; 
+    }
 
     template<typename rT>
     static
@@ -179,12 +204,28 @@ private:
 
 template<int Idx> struct assistant<Idx>
 {
-    static int index() { return -1; }
+    static int index() 
+    { 
+        return -1;
+    }
+    
     template<typename eT, typename ...Args>
-    static int construct(void* data, Args&&... args) { throw std::bad_cast(); return -1; }
+    static int construct(void* data, Args&&... args) 
+    { 
+        throw std::bad_cast(); 
+        return -1;
+    }
+    
     template<typename ...Args>
-    static int construct(int ix, void* data, Args&&... args) { throw std::bad_cast(); return -1; }
-    static int destruct(int ix, void* data) { return -1; }
+    static int construct(int ix, void* data, Args&&... args) 
+    { 
+        throw std::bad_cast(); 
+        return -1;
+    }
+    
+    static int destruct(int ix, void* data) 
+    { 
+        return -1; }
     static int move(int ix, void* from, void* to) { throw std::bad_cast(); return -1; }
     static int copy(int ix, void const* from, void* to) { throw std::bad_cast(); return -1; }
     template<typename rT> static rT& cast(int ix, void* data) { throw std::bad_cast(); }
