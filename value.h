@@ -225,10 +225,26 @@ template<int Idx> struct assistant<Idx>
     
     static int destruct(int ix, void* data) 
     { 
-        return -1; }
-    static int move(int ix, void* from, void* to) { throw std::bad_cast(); return -1; }
-    static int copy(int ix, void const* from, void* to) { throw std::bad_cast(); return -1; }
-    template<typename rT> static rT& cast(int ix, void* data) { throw std::bad_cast(); }
+        return -1;
+    }
+    
+    static int move(int ix, void* from, void* to) 
+    { 
+        throw std::bad_cast(); 
+        return -1;
+    }
+    
+    static int copy(int ix, void const* from, void* to) 
+    { 
+        throw std::bad_cast(); 
+        return -1;
+    }
+    
+    template<typename rT> 
+    static rT& cast(int ix, void* data) 
+    { 
+        throw std::bad_cast();
+    }
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -236,7 +252,6 @@ template<typename ...tList>
 struct Value
 {
 private:
-public:
     static constexpr int data_size = static_max<sizeof(tList)...>::result;
     static constexpr int alignment = static_max<alignof(tList)...>::result;
     using data_type = typename std::aligned_storage<data_size, alignment>::type;
